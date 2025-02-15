@@ -32,7 +32,7 @@ function calculateAverageTrash(data) {
 
 // --- Plotting Module ---
 function plotTrashData(data) {
-    const margin = { top: 20, right: 30, bottom: 40, left: 40 };
+    const margin = { top: 20, right: 30, bottom: 90, left: 40 };
     const width = 640 - margin.left - margin.right;
     const height = 360 - margin.top - margin.bottom;
 
@@ -42,6 +42,9 @@ function plotTrashData(data) {
         .attr('height', height + margin.top + margin.bottom)
         .append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
+
+    // Форматтер для даты (без года и миллисекунд)
+    const formatDate = d3.timeFormat("%d %b %H:%M"); // Формат: "01 Jan 15:00"
 
     const x = d3
         .scaleBand()
@@ -55,12 +58,26 @@ function plotTrashData(data) {
         .nice()
         .range([height, 0]);
 
+    // Ось X с поворотом меток
     svg
         .append('g')
         .attr('transform', `translate(0,${height})`)
-        .call(d3.axisBottom(x))
-        .attr('class', 'axis');
+        .call(
+            d3.axisBottom(x)
+                .tickFormat(d => {
+                    // Парсим дату из строки и форматируем
+                    const date = new Date(d);
+                    return formatDate(date);
+                })
+        )
+        .attr('class', 'axis')
+        .selectAll("text")
+        .attr("transform", "rotate(-45)")
+        .style("text-anchor", "end")
+        .attr("dx", "-0.5em")
+        .attr("dy", "0.5em");
 
+    // Остальной код без изменений
     svg
         .append('g')
         .call(d3.axisLeft(y))
@@ -94,7 +111,7 @@ function plotTrashData(data) {
         .on('mouseover', function (event, d) {
             tooltip
                 .style('display', 'block')
-                .html(`<strong>${d.time}</strong><br>Количество мусора: ${d.trash}`)
+                .html(`<strong>${formatDate(new Date(d.time))}</strong><br>Количество мусора: ${d.trash}`)
                 .style('left', `${event.pageX + 5}px`)
                 .style('top', `${event.pageY - 20}px`);
         })
@@ -107,7 +124,6 @@ function plotTrashData(data) {
                 .style('top', `${event.pageY - 20}px`);
         });
 }
-
 
 // --- Popup Module ---
 function showPopupIfNeeded() {
