@@ -1,3 +1,6 @@
 .vscode/
 .venv/
 /gg.py
+/*.mp4
+/*.jpg
+/backend/database/*
