@@ -1,12 +1,13 @@
 from sanic import Sanic, HTTPResponse
-from sanic.response import empty, file
+from sanic.response import empty, file, json as s_json
 import cv2
 import os
 import asyncio
 from ultralytics import YOLO
 import sqlite3
-from datetime import datetime
 from sanic.worker.manager import WorkerManager
+from sanic_cors import CORS
+from datetime import datetime, timedelta
 
 
 WorkerManager.THRESHOLD = 600
@@ -16,6 +17,14 @@ TIMEOUT = 0.5  # in minutes
 app = Sanic("VideoStreamingApp")
 
 app.static("/", "frontend")
+
+CORS(
+    app,
+    resources={r"/trash_data/*": {"origins": "*"}},
+    automatic_options=True,
+    supports_credentials=False,
+    allow_headers=["Content-Type", "Authorization"],
+)
 
 frame_buffer = None
 buffer_lock = asyncio.Lock()
@@ -47,7 +56,7 @@ def insert_data(trash_amount):
         INSERT INTO trash_records (stamp, trash_amount)
         VALUES (?, ?)
         """,
-        (datetime.now(), trash_amount),
+        (datetime.now().strftime("%Y-%m-%d %H:%M:%S"), trash_amount),
     )
     conn.commit()
 
@@ -120,7 +129,7 @@ async def generate_frames():
             if frame_buffer:
                 yield (
                     b"--frame\r\n"
-                    b"Content-Type: image/jpeg\r\n\r\n" + frame_buffer + b"\r\n"
+                    b"Contoent-Type: image/jpeg\r\n\r\n" + frame_buffer + b"\r\n"
                 )
 
 
@@ -137,6 +146,47 @@ async def video_feed(request):
     async for frame in generate_frames():
         await response.send(frame)
     return empty()
+
+
+@app.get("/trash_data")
+async def get_trash_data(request):
+    timeframe = request.args.get("timeframe", "15m")
+
+    match timeframe:
+        case "5m":
+            timeframe_minutes = 1
+        case "15m":
+            timeframe_minutes = 15
+        case "30m":
+            timeframe_minutes = 30
+        case "1h":
+            timeframe_minutes = 60
+        case "1d":
+            timeframe_minutes = 1440
+
+    start_time = datetime.now() - timedelta(minutes=timeframe_minutes)
+    end_time = datetime.now()
+    rows = []
+
+    for i in range(15):
+        q = """
+            SELECT MIN(stamp), AVG(trash_amount)
+            FROM trash_records
+            WHERE stamp BETWEEN ? AND ?;
+            """
+        cursor.execute(q, (start_time, end_time))
+        results = cursor.fetchall()
+        # print(results)
+        if results[0][0] is None or results[0][1] is None:
+            break
+        rows.append(results)
+        start_time -= timedelta(minutes=timeframe_minutes)
+        end_time -= timedelta(minutes=timeframe_minutes)
+
+    result = [{"time": row[0][0], "trash": round(row[0][1])} for row in rows][::-1]
+
+    print(result)
+    return s_json(result)
 
 
 @app.before_server_start
