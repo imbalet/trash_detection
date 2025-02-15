@@ -65,8 +65,8 @@ body {
 
 span {
     font-size: 20px;
-    font-family: 'SF Pro Display';
-    font-weight: medium;
+    font-family: 'SF Pro Display Light Italic', sans-serif;
+    font-weight: light;
     font-style: italic;
     color: #2c6e49;
 }
@@ -147,3 +147,10 @@ span {
     stroke: #2c6e49;
     /* Цвет линий осей */
   }
+
+  @font-face {
+    font-family: 'SF Pro Display Light Italic';
+    src: url('SFPRODISPLAYLIGHTITALIC.otf') format('opentype');
+    font-weight: normal;
+    font-style: italic;
+}   
