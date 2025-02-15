@@ -1,0 +1,4 @@
+sanic==24.6.0
+Sanic_Cors==2.2.0
+scikit_learn==1.5.2
+ultralytics==8.2.92

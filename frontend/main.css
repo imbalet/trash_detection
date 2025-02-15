@@ -1,0 +1,163 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #F6FFF8;
+}
+
+.container {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    justify-content: center;
+}
+
+.container img {
+    width: 50px;
+    height: auto;
+    margin: 0;
+    padding: 0;
+}
+
+.container .div {
+    font-size: 40px;
+    font-family: 'Dela Gothic One', sans-serif;
+    color: #2c6e49;
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+    position: relative;
+    top: -5px;
+}
+
+.line-div {
+    width: 100%;
+    position: relative;
+    border-top: 3px solid #2c6e49;
+    box-sizing: border-box;
+    height: 3px;
+    top: -3px;
+}
+
+
+#video-player {
+    display: none;
+    color: #2c6e49;
+    border-radius: 10px;
+    margin-top: 2%;
+}
+
+#file-input-container {
+    width: 640px;
+    height: 360px;
+    border: 5px solid #2c6e49;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    margin-top: 2%;
+    color: #2c6e49;
+    border-radius: 10px;
+}
+
+#file-input {
+    display: none;
+}
+
+span {
+    font-size: 20px;
+    font-family: 'SF Pro Display Light Italic', sans-serif;
+    font-weight: light;
+    font-style: italic;
+    color: #2c6e49;
+}
+
+.child {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    /* Центрирует по горизонтали */
+    /* height: 100vh;   */
+    margin-top: 10px;
+    /* margin-bottom: 10px; */
+}
+
+.graph {
+    /* position: relative; */
+    border: 5px solid #2c6e49;
+    border-radius: 10px;
+    margin-top: 10px;
+    width: 640px;
+    height: 360px;
+}
+
+.container1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 0px;
+    /* Добавляем небольшой отступ */
+}
+
+.container2 {
+    margin-top: 10px;
+    margin-bottom: 33px;
+}
+
+.line-div2 {
+    width: 100%;
+    position: relative;
+    border-top: 3px solid #2c6e49;
+    box-sizing: border-box;
+    height: 3px;
+    margin-top: 33px;
+    top: 3px;
+}
+
+.container_trash {
+    text-align: center;
+
+}
+
+#chart {
+    border: 5px solid #2c6e49;
+    background-color: #fff;
+    border-radius: 10px;
+}
+
+#tooltip {
+    position: absolute;
+    display: none;
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 3px;
+    pointer-events: none;
+}
+
+/* Стили для текста на осях */
+.axis text {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    /* Размер шрифта */
+    font-weight: bold;
+    fill: #2c6e49;
+    /* Цвет текста */
+}
+
+/* Стили для линий осей */
+.axis path,
+.axis line {
+    stroke: #2c6e49;
+    /* Цвет линий осей */
+}
+
+@font-face {
+    font-family: 'SF Pro Display Light Italic';
+    src: url('SFPRODISPLAYLIGHTITALIC.otf') format('opentype');
+    font-weight: normal;
+    font-style: italic;
+}
+
+#file-input-container img {
+    height: 100%;
+}
