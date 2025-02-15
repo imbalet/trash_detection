@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Распознавание мусора</title>
+    <link rel="stylesheet" href="main.css">
+    <script src="script.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=SF Pro Display:wght@500&display=swap" />
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+
+<body>
+    <!-- КОНТЕЙНЕР С ГЛАЗОМ -->
+    <div class="container">
+        <img src="EYE.svg" alt="Глаз">
+        <div class="div">Распознавание мусора - Хакатон 2025</div>
+    </div>
+    <div class="line-div"></div>
+
+    <!-- Загрузчик видео -->
+    <div class="container1">
+        <div id="file-input-container">
+            <span>Загрузите видео</span>
+            <input type="file" id="file-input" accept="video/*">
+        </div>
+
+        <div id="video-player">
+            <video id="my-video" width="640" height="360" controls style="border-radius: 10px; border: 5px solid;">
+                <source src="" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+
+    <!--Надпись для мусора  -->
+    <div class="container2">
+        <div class="container">
+            <div class="div">Найден мусор!</div>
+        </div>
+        <span class="child">Уберите его</span>
+    </div>
+
+    <!-- График -->
+    <div class="container1">
+        <img class="graph" id="graph-img" src="graph.png" alt="График">
+    </div>
+    <span class="child">График частоты загрязнений</span>
+
+    <div class="container_trash" style="display: none;">
+        <svg id="chart" width="640" height="360"></svg>
+        <div id="tooltip"></div>
+      </div>
+      <script>
+        const data = [
+          { time: '14:00', trash: 65 },
+          { time: '14:15', trash: 59 },
+          { time: '14:30', trash: 80 },
+          { time: '14:45', trash: 81 },
+          { time: '15:00', trash: 56 },
+          { time: '15:15', trash: 55 }
+        ];
+    
+        const margin = { top: 20, right: 30, bottom: 40, left: 40 };
+        const width = 640 - margin.left - margin.right;
+        const height = 360 - margin.top - margin.bottom;
+    
+        const svg = d3.select("#chart")
+          .attr("width", width + margin.left + margin.right)
+          .attr("height", height + margin.top + margin.bottom)
+          .append("g")
+          .attr("transform", `translate(${margin.left},${margin.top})`);
+    
+        const x = d3.scaleBand()
+          .domain(data.map(d => d.time))
+          .range([0, width])
+          .padding(0.1);
+    
+        const y = d3.scaleLinear()
+          .domain([0, d3.max(data, d => d.trash)])
+          .nice()
+          .range([height, 0]);
+    
+        // Ось X
+        svg.append("g")
+          .attr("transform", `translate(0,${height})`)
+          .call(d3.axisBottom(x))
+          .attr("class", "axis"); // Добавляем класс для стилизации
+    
+        // Ось Y
+        svg.append("g")
+          .call(d3.axisLeft(y))
+          .attr("class", "axis"); // Добавляем класс для стилизации
+    
+        // Линия графика
+        const line = d3.line()
+          .x(d => x(d.time) + x.bandwidth() / 2)
+          .y(d => y(d.trash));
+    
+        svg.append("path")
+          .datum(data)
+          .attr("fill", "none")
+          .attr("stroke", "#2c6e49")
+          .attr("stroke-width", 5)
+          .attr("d", line);
+    
+        // Точки на графике
+        const dots = svg.selectAll(".dot")
+          .data(data)
+          .enter()
+          .append("circle")
+          .attr("class", "dot")
+          .attr("cx", d => x(d.time) + x.bandwidth() / 2)
+          .attr("cy", d => y(d.trash))
+          .attr("r", 7)
+          .attr("fill", "#2c6e49");
+    
+        // Подсказка
+        const tooltip = d3.select("#tooltip");
+    
+        dots.on("mouseover", function (event, d) {
+          tooltip.style("display", "block")
+            .html(`<strong>${d.time}</strong><br>Количество мусора: ${d.trash}`)
+            .style("left", `${event.pageX + 5}px`)
+            .style("top", `${event.pageY - 20}px`);
+        });
+    
+        dots.on("mouseout", function () {
+          tooltip.style("display", "none");
+        });
+    
+        dots.on("mousemove", function (event) {
+          tooltip.style("left", `${event.pageX + 5}px`)
+            .style("top", `${event.pageY - 20}px`);
+        });
+      </script>
+
+
+
+
+
+    <!-- Футер -->
+    <div class="line-div2"></div>
+    <div class="container">
+        <div class="div">Распознавание мусора - Хакатон 2025</div>
+        <img src="EYE.svg" alt="Глаз">
+    </div>
+</body>
+
+</html>
