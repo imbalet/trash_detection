@@ -77,7 +77,7 @@ span {
     /* Центрирует по горизонтали */
     /* height: 100vh;   */
     margin-top: 10px;
-    /* margin-bottom: 10px; */
+    margin-bottom: 5px;
 }
 
 .graph {
@@ -167,12 +167,16 @@ span {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     /* Полупрозрачный фон */
+    z-index: 1000;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
 }
 
 .popup-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    align-items: center;
     background-color: white;
     padding: 20px;
     border-radius: 10px;
@@ -196,6 +200,10 @@ span {
     max-height: 80vh;
     /* Максимальная высота (80% от высоты экрана) */
     overflow-y: auto;/
+}
+
+.popup-content span {
+    cursor: pointer;
 }
 
 

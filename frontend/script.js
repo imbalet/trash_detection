@@ -14,20 +14,12 @@ async function fetchTrashData() {
         Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
 
         const data = await fetch(url);
-        // const response = await fetch('http://localhost:5000/trash_data');
-        // const data = await response.json();
         console.log(data);
         return data;
     } catch (error) {
         console.error('Ошибка при получении данных:', error);
         return null;
     }
-}
-
-// --- Data Calculation Module ---
-function calculateAverageTrash(data) {
-    const totalTrash = data.reduce((sum, item) => sum + item.trash, 0);
-    return totalTrash / data.length;
 }
 
 // --- Plotting Module ---
@@ -43,8 +35,7 @@ function plotTrashData(data) {
         .append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    // Форматтер для даты (без года и миллисекунд)
-    const formatDate = d3.timeFormat("%d %b %H:%M"); // Формат: "01 Jan 15:00"
+    const formatDate = d3.timeFormat("%d %b %H:%M");
 
     const x = d3
         .scaleBand()
@@ -57,15 +48,12 @@ function plotTrashData(data) {
         .domain([0, d3.max(data, (d) => d.trash)])
         .nice()
         .range([height, 0]);
-
-    // Ось X с поворотом меток
     svg
         .append('g')
         .attr('transform', `translate(0,${height})`)
         .call(
             d3.axisBottom(x)
                 .tickFormat(d => {
-                    // Парсим дату из строки и форматируем
                     const date = new Date(d);
                     return formatDate(date);
                 })
@@ -77,7 +65,6 @@ function plotTrashData(data) {
         .attr("dx", "-0.5em")
         .attr("dy", "0.5em");
 
-    // Остальной код без изменений
     svg
         .append('g')
         .call(d3.axisLeft(y))
@@ -126,14 +113,17 @@ function plotTrashData(data) {
 }
 
 // --- Popup Module ---
-function showPopupIfNeeded() {
+function showPopupIfNeeded(data) {
     const popup = document.getElementById('popup');
     const popupMessage = document.getElementById('popup-message');
     const closePopup = document.getElementById('close-popup');
-    const averageTrash = window.averageTrash;
 
-    if (averageTrash > 3) {
-        popupMessage.textContent = `Много мусора! Среднее количество мусора: ${averageTrash}`;
+    if (data.length <= 1) { return; }
+    let last = data[data.length - 1]["trash"];
+    let prev_last = data[data.length - 2]["trash"];
+
+    if (last - prev_last > 3) {
+        popupMessage.textContent = `Много мусора! Среднее количество мусора: ${last}`;
         popup.style.display = 'flex';
     }
 
@@ -169,7 +159,7 @@ const setup_buttons = () => {
             timeFrame = event.target.getAttribute('data-time');
             switch (timeFrame) {
                 case "5m":
-                    timeFrameMinutes = 1;
+                    timeFrameMinutes = 5;
                     break;
                 case "15m":
                     timeFrameMinutes = 15;
@@ -200,14 +190,11 @@ const update_plot = async () => {
     const data = await resp.json();
 
     if (data && data.length > 0) {
-        const averageTrash = calculateAverageTrash(data);
-        window.averageTrash = averageTrash;
-        console.log('Среднее количество мусора:', averageTrash);
 
         clearChart();
 
         plotTrashData(data);
-        showPopupIfNeeded();
+        showPopupIfNeeded(data);
     }
     setTimeout(update_plot, timeFrameMinutes * 60000);
 };

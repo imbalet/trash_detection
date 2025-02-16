@@ -154,7 +154,7 @@ async def get_trash_data(request):
 
     match timeframe:
         case "5m":
-            timeframe_minutes = 1
+            timeframe_minutes = 5
         case "15m":
             timeframe_minutes = 15
         case "30m":
