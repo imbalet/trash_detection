@@ -9,7 +9,7 @@ let timeFrameMinutes = 15;
 async function fetchTrashData() {
     try {
         const params = { timeframe: timeFrame };
-        const url = new URL("http://localhost:5000/trash_data");
+        const url = new URL("http://localhost:8080/trash_data");
 
         Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
 

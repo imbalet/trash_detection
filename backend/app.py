@@ -152,17 +152,28 @@ async def video_feed(request):
 async def get_trash_data(request):
     timeframe = request.args.get("timeframe", "15m")
 
-    match timeframe:
-        case "5m":
-            timeframe_minutes = 5
-        case "15m":
-            timeframe_minutes = 15
-        case "30m":
-            timeframe_minutes = 30
-        case "1h":
-            timeframe_minutes = 60
-        case "1d":
-            timeframe_minutes = 1440
+    if timeframe == "5m":
+        timeframe_minutes = 5
+    elif timeframe == "15m":
+        timeframe_minutes = 15
+    elif timeframe == "30m":
+        timeframe_minutes = 30
+    elif timeframe == "1h":
+        timeframe_minutes = 60
+    else:
+        timeframe_minutes = 1440   
+    
+    # match timeframe:
+    #     case "5m":
+    #         timeframe_minutes = 5
+    #     case "15m":
+    #         timeframe_minutes = 15
+    #     case "30m":
+    #         timeframe_minutes = 30
+    #     case "1h":
+    #         timeframe_minutes = 60
+    #     case "1d":
+    #         timeframe_minutes = 1440
 
     start_time = datetime.now() - timedelta(minutes=timeframe_minutes)
     end_time = datetime.now()
