@@ -4,8 +4,8 @@ WORKDIR /app
 RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
 COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-COPY backend/ /app/
-COPY frontend/ /app/
+COPY backend/ /app/backend
+COPY frontend/ /app/frontend
 EXPOSE 8080
 
 CMD ["python", "backend/app.py", "--host", "0.0.0.0", "--port", "5000"]

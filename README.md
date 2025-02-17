@@ -1,5 +1,10 @@
-run to deploy:
+Для запуска нужно использовать docker и команду
+```
+docker run --gpus all --device /dev/video2:/dev/video0 -p 8080:5000 -v volume:/app/backend/database trash
+```
 
-```
-docker run --device /dev/video2:/dev/video2 --gpus all -p 8080:5000 -v volume:/app/ my-web-server
-```
+В `--device /dev/video2:/dev/video0` необходимо `/dev/video2` поменять на локальную камеру, с которой будет браться видеопоток.
+
+В `-p 8080:5000` необходимо `8080` поменять на требуемый порт для доступа к веб-интерфейсу
+
+Вею интерефейс будет доступен на `localhost:<выбранный_порт>` (8080) по умолчанию 
