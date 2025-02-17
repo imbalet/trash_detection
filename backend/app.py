@@ -1,20 +1,29 @@
-from sanic import Sanic, HTTPResponse
+from sanic import Sanic
 from sanic.response import empty, file, json as s_json
 import cv2
 import os
 import asyncio
+import torch.version
 from ultralytics import YOLO
 import sqlite3
 from sanic.worker.manager import WorkerManager
 from sanic_cors import CORS
 from datetime import datetime, timedelta
-
+from sanic.log import logger
+import torch
 
 WorkerManager.THRESHOLD = 600
 FPS = 10
 TIMEOUT = 0.5  # in minutes
+CAMERA_ID = int(os.environ.get("CAMERA_ID", 0))
+DEVICE = "0" if torch.cuda.is_available() else "cpu"
+
 
 app = Sanic("VideoStreamingApp")
+
+logger.info(
+    f"device = {DEVICE}, cuda = {torch.version.cuda}, torch = {torch.__version__}, cuda_aval = {torch.cuda.is_available()}"
+)
 
 app.static("/", "frontend")
 
@@ -63,6 +72,7 @@ def insert_data(trash_amount):
 
 def predict(
     file_,
+    device_="cpu",
     show_=False,
     imgsz_=1280,
     show_labels_=False,
@@ -73,7 +83,7 @@ def predict(
     verbose_=False,
 ):
     pre = model.predict(
-        device=0,
+        device=device_,
         source=file_,
         show=show_,
         imgsz=imgsz_,
@@ -89,7 +99,8 @@ def predict(
 
 async def read_frames():
     global frame_buffer, trash_amount
-    cap = cv2.VideoCapture(2)
+    print(CAMERA_ID)
+    cap = cv2.VideoCapture(CAMERA_ID, cv2.CAP_V4L2)
     if not cap.isOpened():
         raise RuntimeError("Не удалось открыть камеру!")
     try:
@@ -99,7 +110,9 @@ async def read_frames():
                 print("Ошибка: Не удалось захватить кадр.")
                 break
 
-            pred = predict(frame, show_=False, imgsz_=736, show_labels_=False)
+            pred = predict(
+                frame, show_=False, imgsz_=736, show_labels_=False, device_=DEVICE
+            )
             trash_amount = len(pred[0].boxes)
             annotated_frame = pred[0].plot()
 
@@ -161,8 +174,8 @@ async def get_trash_data(request):
     elif timeframe == "1h":
         timeframe_minutes = 60
     else:
-        timeframe_minutes = 1440   
-    
+        timeframe_minutes = 1440
+
     # match timeframe:
     #     case "5m":
     #         timeframe_minutes = 5
