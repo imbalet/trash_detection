@@ -6,4 +6,4 @@
 /*.mkv
 /*.ogv
 /*.jpg
-/backend/database/*
+/backend/database/trash_data.db

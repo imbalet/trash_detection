@@ -41,6 +41,8 @@ trash_amount = 0
 
 model = YOLO(os.path.join(os.path.dirname(__file__), "files", "best.pt"))
 
+if not os.path.isdir(os.path.join(os.path.dirname(__file__), "database")):
+    os.mkdir(os.path.join(os.path.dirname(__file__), "database"))
 
 conn = sqlite3.connect(
     os.path.join(os.path.dirname(__file__), "database", "trash_data.db"),
