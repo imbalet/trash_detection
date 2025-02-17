@@ -102,7 +102,7 @@ def predict(
 async def read_frames():
     global frame_buffer, trash_amount
     print(CAMERA_ID)
-    cap = cv2.VideoCapture(CAMERA_ID, cv2.CAP_V4L2)
+    cap = cv2.VideoCapture(CAMERA_ID)
     if not cap.isOpened():
         raise RuntimeError("Не удалось открыть камеру!")
     try:
